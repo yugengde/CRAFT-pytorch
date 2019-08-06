@@ -120,7 +120,6 @@ def savePartImg(filename, image):
     h, w = image.shape[:2]
     h, w = 28, int(28 * w/h)
     image = cv2.resize(partImg, (w, h))
-    print(filename)
     cv2.imwrite(filename, image)
 
 
@@ -161,7 +160,6 @@ if __name__ == '__main__':
         bboxes, polys, score_text = test_net(net, image, args.text_threshold, args.link_threshold, args.low_text, args.cuda, args.poly)
         for box in bboxes:
             w1, w2, h1, h2 = vertexCordinate2axisSpan(box)
-            # print(w1, w2, h1, h2)
             assert w1 < w2 and  h1 < h2
             partImg = np_image[h1:h2, w1:w2]
             filename = os.path.join(partImgDir, "%.10f.jpg" % time.time())
