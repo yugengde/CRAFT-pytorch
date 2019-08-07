@@ -119,8 +119,8 @@ def  vertexCordinate2axisSpan(box):
 def savePartImg(filename, image):
     h, w = image.shape[:2]
     h, w = 28, int(28 * w/h)
-    image = cv2.resize(partImg, (w, h))
-    cv2.imwrite(filename, image)
+    partImg = cv2.resize(image, (w, h))
+    cv2.imwrite(filename, partImg)
 
 
 def dispalyImg(image):
@@ -130,6 +130,10 @@ def dispalyImg(image):
 
 
 if __name__ == '__main__':
+    partImgDir = 'linePartImg'
+    if not os.path.exists(partImgDir):
+        os.mkdir(partImgDir)
+
     # load net
     net = CRAFT()     # initialize
 
@@ -149,9 +153,6 @@ if __name__ == '__main__':
     t = time.time()
 
     # load data
-    partImgDir = 'partImg'
-    if not os.path.exists(partImgDir):
-        os.mkdir(partImgDir)
     for k, image_path in enumerate(image_list):
         print("Test image {:d}/{:d}: {:s}".format(k+1, len(image_list), image_path), end='\r')
         image = imgproc.loadImage(image_path)
