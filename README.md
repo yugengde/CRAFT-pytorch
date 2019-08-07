@@ -1,8 +1,15 @@
 ## text line split
 
 text line split
-```
+```sh
 python3 text_line_split.py
+```
+
+## single char split
+
+single char split
+```sh
+python3 single_char_split.py
 ```
 
 ## CRAFT: Character-Region Awareness For Text detection
