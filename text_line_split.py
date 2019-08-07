@@ -119,7 +119,7 @@ def  vertexCordinate2axisSpan(box):
 def savePartImg(filename, image):
     h, w = image.shape[:2]
     h, w = 28, int(28 * w/h)
-    partImg = cv2.resize(image, (w, h))
+    partImg = cv2.resize(image, (w, h), interpolation=cv2.INTER_CUBIC)
     cv2.imwrite(filename, partImg)
 
 
