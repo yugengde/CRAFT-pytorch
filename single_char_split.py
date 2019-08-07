@@ -86,28 +86,7 @@ def test_net(net, image, text_threshold, link_threshold, low_text, cuda, poly):
     score_text = y[0,:,:,0].cpu().data.numpy()
     score_link = y[0,:,:,1].cpu().data.numpy()
 
-    t0 = time.time() - t0
-    t1 = time.time()
-
-    # Post-processing
-    boxes, polys = craft_utils.getDetBoxes(score_text, score_link, text_threshold, link_threshold, low_text, poly)
-
-    # coordinate adjustment
-    boxes = craft_utils.adjustResultCoordinates(boxes, ratio_w, ratio_h)
-    polys = craft_utils.adjustResultCoordinates(polys, ratio_w, ratio_h)
-    for k in range(len(polys)):
-        if polys[k] is None: polys[k] = boxes[k]
-
-    t1 = time.time() - t1
-
-    # render results (optional)
-    render_img = score_text.copy()
-    render_img = np.hstack((render_img, score_link))
-    ret_score_text = imgproc.cvt2HeatmapImg(render_img)
-
-    if args.show_time : print("\ninfer/postproc time : {:.3f}/{:.3f}".format(t0, t1))
-
-    return boxes, polys, score_text
+    return score_text
 
 
 def  vertexCordinate2axisSpan(box):
@@ -160,10 +139,9 @@ if __name__ == '__main__':
         image = imgproc.loadImage(image_path)
         np_image = np.array(image)
 
-        bboxes, polys, score_text = test_net(net, image, args.text_threshold, args.link_threshold, args.low_text, args.cuda, args.poly)
+        score_text = test_net(net, image, args.text_threshold, args.link_threshold, args.low_text, args.cuda, args.poly)
         _, char = cv2.threshold(score_text, 0.6, 255, 0)
         char = char.astype(np.uint8)
-        # import pdb;pdb.set_trace()
         contours, _ = cv2.findContours(char, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         coordinates = []
@@ -186,7 +164,6 @@ if __name__ == '__main__':
         coordinates = craft_utils.adjustResultCoordinates(coordinates, ratio_w, ratio_h)
         coordinates = coordinates.astype(np.int64)
 
-        a1 = 30
         a2 = 0.22
         for k, coor in enumerate(coordinates):
             x0, y0 = coor[0]
