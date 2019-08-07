@@ -119,8 +119,9 @@ def  vertexCordinate2axisSpan(box):
 
 def savePartImg(filename, image):
     h, w = image.shape[:2]
+    ratio = h / w
     h, w = 28, int(28 * w/h)
-    partImg = cv2.resize(image, (w, h))
+    partImg = cv2.resize(image, (w, h), interpolation=cv2.INTER_CUBIC)
     cv2.imwrite(filename, partImg)
 
 
@@ -199,9 +200,11 @@ if __name__ == '__main__':
                 char_image = image[y0-mi:y2+mi, x0-mi:x2+mi, :]
 
             if char_image.size:
-                crop = cv2.resize(char_image, (256, 256), interpolation=cv2.INTER_CUBIC)
-                filename = os.path.join(partImgDir, "%.10f.jpg" % time.time())
-                savePartImg(filename, crop)
+                h, w = char_image.shape[:2]
+                ratio = h / w
+                if ratio > 0.25 and  ratio < 4:
+                    filename = os.path.join(partImgDir, "%.10f.jpg" % time.time())
+                    savePartImg(filename, char_image)
 
     print("elapsed time : {}s".format(time.time() - t))
 
